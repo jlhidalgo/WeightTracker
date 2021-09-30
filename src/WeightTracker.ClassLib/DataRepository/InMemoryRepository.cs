@@ -23,16 +23,50 @@ namespace WeightTracker.ClassLib.DataRepository
             return _weightRecords.Values.ToList();
         }
 
-        //TODO: make this method as bool, return true or false 
-        public void Insert(WeightRecord weightRecord)
+        // todo: add logs
+        public bool Insert(WeightRecord weightRecord)
         {
             if (weightRecord == null || weightRecord.Id == 0)
-                return;
+                return false;
 
-            // add validation on percentages, they should be greater than 0 but less than 100
-            if (weightRecord.BodyFatPercent > 100 || weightRecord.BonesPercent < 0)
+            if (!ValidPercentages(weightRecord))
+                return false;
+
+            if (!ValidPercentSum(weightRecord))
+                return false;
+
+            if (_weightRecords.ContainsKey(weightRecord.Id))
+                return false;
 
             _weightRecords.Add(weightRecord.Id, weightRecord);
+
+            return true;
+        }
+
+        //Implement a filter to apply multiple rules
+        // perhaps the rules can be implemented using a different technique
+        //Implement a mapper from weight record to a list of doubles
+        // Implement a helper that validate percentages
+        private bool ValidPercentages (WeightRecord weightRecord)
+        {
+            return IsInRange(weightRecord.BodyFatPercent) &&
+            IsInRange(weightRecord.BonesPercent) &&
+            IsInRange(weightRecord.WaterPercent);
+            
+        }
+
+        private bool ValidPercentSum(WeightRecord weightRecord){
+            return weightRecord.BodyFatPercent + weightRecord.BonesPercent + weightRecord.WaterPercent < 100;
+        }
+
+        private bool IsInRange(double value)
+        {
+            return value > 0.0 && value < 100.0;
+        }
+
+        public bool Update(WeightRecord weightRecord)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

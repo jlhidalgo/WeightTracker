@@ -6,7 +6,9 @@ namespace WeightTracker.ClassLib.Interfaces
 {
     public interface IRepository
     {
-        void Insert(WeightRecord weightRecord);
+        bool Insert(WeightRecord weightRecord);
+
+        bool Update (WeightRecord weightRecord);
         List<WeightRecord> GetAll(bool ascending);
         bool Delete(int id);
 
