@@ -2,15 +2,19 @@ using System.Collections.Generic;
 using System.Linq;
 using WeightTracker.ClassLib.Interfaces;
 using WeightTracker.ClassLib.Models;
+using WeightTracker.ClassLib.Rules;
 
 namespace WeightTracker.ClassLib.DataRepository
 {
     public class InMemoryRepository : IRepository
     {
         private Dictionary<int, WeightRecord> _weightRecords = new Dictionary<int, WeightRecord>();
+        private List<IWeightRecordRule> _weightRecordRules = new List<IWeightRecordRule>();
         public InMemoryRepository()
         {
-            
+            _weightRecordRules.Add(new IdWeightRecordRule());
+            _weightRecordRules.Add(new PercentRangeWeightRecordRule());
+            _weightRecordRules.Add(new PercentSumWeightRecordRule());
         }
 
         public bool Delete(int id)
@@ -26,20 +30,14 @@ namespace WeightTracker.ClassLib.DataRepository
         // todo: add logs
         public bool Insert(WeightRecord weightRecord)
         {
-            if (weightRecord == null || weightRecord.Id == 0)
-                return false;
-
-            if (!ValidPercentages(weightRecord))
-                return false;
-
-            if (!ValidPercentSum(weightRecord))
-                return false;
-
-            if (_weightRecords.ContainsKey(weightRecord.Id))
-                return false;
+            if (weightRecord == null || 
+                !_weightRecordRules.All(rule => rule.IsValid(weightRecord)) ||
+                _weightRecords.ContainsKey(weightRecord.Id))
+                {
+                    return false;
+                }
 
             _weightRecords.Add(weightRecord.Id, weightRecord);
-
             return true;
         }
 
@@ -47,23 +45,6 @@ namespace WeightTracker.ClassLib.DataRepository
         // perhaps the rules can be implemented using a different technique
         //Implement a mapper from weight record to a list of doubles
         // Implement a helper that validate percentages
-        private bool ValidPercentages (WeightRecord weightRecord)
-        {
-            return IsInRange(weightRecord.BodyFatPercent) &&
-            IsInRange(weightRecord.BonesPercent) &&
-            IsInRange(weightRecord.WaterPercent);
-            
-        }
-
-        private bool ValidPercentSum(WeightRecord weightRecord){
-            return weightRecord.BodyFatPercent + weightRecord.BonesPercent + weightRecord.WaterPercent < 100;
-        }
-
-        private bool IsInRange(double value)
-        {
-            return value > 0.0 && value < 100.0;
-        }
-
         public bool Update(WeightRecord weightRecord)
         {
             throw new System.NotImplementedException();
