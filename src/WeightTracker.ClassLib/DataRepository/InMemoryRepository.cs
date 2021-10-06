@@ -30,8 +30,7 @@ namespace WeightTracker.ClassLib.DataRepository
         // todo: add logs
         public bool Insert(WeightRecord weightRecord)
         {
-            if (weightRecord == null || 
-                !_weightRecordRules.All(rule => rule.IsValid(weightRecord)) ||
+            if (!_weightRecordRules.All(rule => rule.IsValid(weightRecord)) ||
                 _weightRecords.ContainsKey(weightRecord.Id))
                 {
                     return false;
@@ -41,10 +40,6 @@ namespace WeightTracker.ClassLib.DataRepository
             return true;
         }
 
-        //Implement a filter to apply multiple rules
-        // perhaps the rules can be implemented using a different technique
-        //Implement a mapper from weight record to a list of doubles
-        // Implement a helper that validate percentages
         public bool Update(WeightRecord weightRecord)
         {
             throw new System.NotImplementedException();
