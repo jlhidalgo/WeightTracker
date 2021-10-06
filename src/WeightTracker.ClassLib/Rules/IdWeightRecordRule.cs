@@ -7,7 +7,7 @@ namespace WeightTracker.ClassLib.Rules
     {
         public bool IsValid(WeightRecord weightRecord)
         {
-            return !(weightRecord.Id == 0);
+            return weightRecord == null ? false : weightRecord.Id > 0;
         }
     }
 }
