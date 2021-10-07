@@ -10,19 +10,27 @@ namespace WeightTracker.ClassLib.Tests.DataRepository
     {
         private WeightRecord _weightRecordOK;
         private WeightRecord _weightRecordOK2;
+        private WeightRecord _weightRecordOK3;
 
         [TestInitialize]
         public void Setup()
         {
             _weightRecordOK = new WeightRecord { Id = 1,
-                CreatedDate = DateTime.Now, 
+                CreatedDate = DateTime.Now.AddDays(1), 
                 BodyFatPercent = 1,
                 BonesPercent = 1,
                 WaterPercent = 1
             };
 
             _weightRecordOK2 = new WeightRecord { Id = 2,
-                CreatedDate = DateTime.Now, 
+                CreatedDate = DateTime.Now.AddDays(-1), 
+                BodyFatPercent = 50,
+                BonesPercent = 30,
+                WaterPercent = 10
+            };
+
+            _weightRecordOK3 = new WeightRecord { Id = 3,
+                CreatedDate = DateTime.Now.AddDays(0), 
                 BodyFatPercent = 50,
                 BonesPercent = 30,
                 WaterPercent = 10
@@ -57,6 +65,34 @@ namespace WeightTracker.ClassLib.Tests.DataRepository
             var result = sut.GetAll(true);
             Assert.AreNotEqual(-1, result.IndexOf(_weightRecordOK));
             Assert.AreNotEqual(-1, result.IndexOf(_weightRecordOK2));
+            
+        }
+
+        [TestMethod]
+        public void ShouldReturnRecordsInAscendingOrderByCreatedDate(){
+            var sut = new InMemoryRepository();
+            sut.Insert(_weightRecordOK);
+            sut.Insert(_weightRecordOK2);
+            sut.Insert(_weightRecordOK3);
+
+            var result = sut.GetAll(true);
+            Assert.AreEqual(2, result.IndexOf(_weightRecordOK));
+            Assert.AreEqual(0, result.IndexOf(_weightRecordOK2));
+            Assert.AreEqual(1, result.IndexOf(_weightRecordOK3));
+            
+        }
+
+        [TestMethod]
+        public void ShouldReturnRecordsInDescendingOrderByCreatedDate(){
+            var sut = new InMemoryRepository();
+            sut.Insert(_weightRecordOK);
+            sut.Insert(_weightRecordOK2);
+            sut.Insert(_weightRecordOK3);
+
+            var result = sut.GetAll(false);
+            Assert.AreEqual(0, result.IndexOf(_weightRecordOK));
+            Assert.AreEqual(2, result.IndexOf(_weightRecordOK2));
+            Assert.AreEqual(1, result.IndexOf(_weightRecordOK3));
             
         }
 

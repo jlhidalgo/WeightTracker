@@ -22,10 +22,15 @@ namespace WeightTracker.ClassLib.DataRepository
             throw new System.NotImplementedException();
         }
 
-        //TODO: Implement sorting mechanism, use created date
         public List<WeightRecord> GetAll(bool ascending)
         {
-            return _weightRecords.Values.ToList();
+            var records = _weightRecords.Values.ToList();
+                
+            if(ascending)
+                return records.OrderBy(x => x.CreatedDate).ToList();
+            else
+                return records.OrderByDescending(x => x.CreatedDate).ToList();
+            
         }
 
         // todo: add logs
