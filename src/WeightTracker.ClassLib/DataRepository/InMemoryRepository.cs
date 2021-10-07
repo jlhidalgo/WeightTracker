@@ -24,7 +24,13 @@ namespace WeightTracker.ClassLib.DataRepository
 
         public List<WeightRecord> GetAll(bool ascending)
         {
-            return _weightRecords.Values.ToList();
+            var records = _weightRecords.Values.ToList();
+                
+            if(ascending)
+                return records.OrderBy(x => x.CreatedDate).ToList();
+            else
+                return records.OrderByDescending(x => x.CreatedDate).ToList();
+            
         }
 
         // todo: add logs
