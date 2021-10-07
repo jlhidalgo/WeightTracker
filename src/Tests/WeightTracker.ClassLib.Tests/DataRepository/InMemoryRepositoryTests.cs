@@ -9,15 +9,23 @@ namespace WeightTracker.ClassLib.Tests.DataRepository
     public class InMemoryRepositoryTests
     {
         private WeightRecord _weightRecordOK;
+        private WeightRecord _weightRecordOK2;
 
         [TestInitialize]
         public void Setup()
         {
             _weightRecordOK = new WeightRecord { Id = 1,
-            CreatedDate = DateTime.Now, 
-            BodyFatPercent = 1,
-            BonesPercent = 1,
-            WaterPercent = 1
+                CreatedDate = DateTime.Now, 
+                BodyFatPercent = 1,
+                BonesPercent = 1,
+                WaterPercent = 1
+            };
+
+            _weightRecordOK2 = new WeightRecord { Id = 2,
+                CreatedDate = DateTime.Now, 
+                BodyFatPercent = 50,
+                BonesPercent = 30,
+                WaterPercent = 10
             };
         }
 
@@ -47,6 +55,22 @@ namespace WeightTracker.ClassLib.Tests.DataRepository
         [DataRow(1,0,1)]
         [DataRow(1,1,0)]
         public void ShouldNotInsertRecordIfAnyPercentIsZero(double bfp, double bp, double wp){
+            var wr = new WeightRecord { Id = 1,
+            CreatedDate = DateTime.Now, 
+            BodyFatPercent = bfp,
+            BonesPercent = bp,
+            WaterPercent = wp
+            };
+            var sut = new InMemoryRepository();
+            var result = sut.Insert(wr);
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        [DataRow(-1, 1, 1)]
+        [DataRow(1, -1, 1)]
+        [DataRow(1, 1, -1)]
+        public void ShouldNotInsertRecordIfAnyPercentIsLessThanZero(double bfp, double bp, double wp){
             var wr = new WeightRecord { Id = 1,
             CreatedDate = DateTime.Now, 
             BodyFatPercent = bfp,
@@ -96,6 +120,17 @@ namespace WeightTracker.ClassLib.Tests.DataRepository
             var result = sut.Insert(_weightRecordOK);
             Assert.AreEqual(true, result);
         }
+
+        [TestMethod]
+        public void ShouldInsertMultipleRecorsWithDifferentIds(){
+            var sut = new InMemoryRepository();
+            var result = sut.Insert(_weightRecordOK);
+            Assert.AreEqual(true, result);
+
+            result = sut.Insert(_weightRecordOK2);
+            Assert.AreEqual(true, result);
+        }
+
 
         [TestMethod]
         public void ShouldNotInsertIfIdAlreadyInserted(){
