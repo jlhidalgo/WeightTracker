@@ -29,13 +29,48 @@ namespace WeightTracker.ClassLib.Tests.DataRepository
             };
         }
 
+        #region GetAll Tests
+
         [TestMethod]
-        public void ShouldReturnEmptyDictionaryIfNoRecords(){
+        public void ShouldReturnEmptyListIfNoRecords(){
             var sut = new InMemoryRepository();
             var result = sut.GetAll(true);
             Assert.AreEqual(result.Count, 0);
         }
 
+        [TestMethod]
+        public void ShouldReturnListWithAllRecords(){
+            var sut = new InMemoryRepository();
+            sut.Insert(_weightRecordOK);
+            sut.Insert(_weightRecordOK2);
+
+            var result = sut.GetAll(true);
+            Assert.AreEqual(result.Count, 2);
+        }
+
+        [TestMethod]
+        public void ShouldPersistRecordsDataWhenConvertedToList(){
+            var sut = new InMemoryRepository();
+            sut.Insert(_weightRecordOK);
+            sut.Insert(_weightRecordOK2);
+
+            var result = sut.GetAll(true);
+            Assert.AreNotEqual(-1, result.IndexOf(_weightRecordOK));
+            Assert.AreNotEqual(-1, result.IndexOf(_weightRecordOK2));
+            
+        }
+
+        #endregion
+
+        #region Delete Tests
+             
+        #endregion
+
+        #region Update Tests
+             
+        #endregion
+
+        #region Insert Tests
         [TestMethod]
         public void ShouldNotInsertRecordIfNullObject(){
             var sut = new InMemoryRepository();
@@ -139,5 +174,7 @@ namespace WeightTracker.ClassLib.Tests.DataRepository
             result = sut.Insert(_weightRecordOK);
             Assert.AreEqual(false, result);
         }
+        
+        #endregion
     }
 }

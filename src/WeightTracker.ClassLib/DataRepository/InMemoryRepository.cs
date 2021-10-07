@@ -22,6 +22,7 @@ namespace WeightTracker.ClassLib.DataRepository
             throw new System.NotImplementedException();
         }
 
+        //TODO: Implement sorting mechanism, use created date
         public List<WeightRecord> GetAll(bool ascending)
         {
             return _weightRecords.Values.ToList();
