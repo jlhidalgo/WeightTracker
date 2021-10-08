@@ -126,6 +126,10 @@ namespace WeightTracker.ClassLib.Tests.DataRepository
             sut.Insert(_weightRecordOK2);
             var result = sut.Delete(_weightRecordOK.Id);
             Assert.AreEqual(true, result);
+            
+            var weightRecords = sut.GetAll();
+            Assert.AreEqual(1, weightRecords.Count);
+            Assert.AreEqual(_weightRecordOK2.Id, weightRecords[0].Id);
         }
              
         #endregion
