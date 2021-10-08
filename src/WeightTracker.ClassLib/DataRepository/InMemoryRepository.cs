@@ -19,11 +19,10 @@ namespace WeightTracker.ClassLib.DataRepository
 
         public bool Delete(int id)
         {
-
             return _weightRecords.Remove(id);
         }
 
-        public List<WeightRecord> GetAll(bool ascending)
+        public List<WeightRecord> GetAll(bool ascending = true)
         {
             var records = _weightRecords.Values.ToList();
                 
