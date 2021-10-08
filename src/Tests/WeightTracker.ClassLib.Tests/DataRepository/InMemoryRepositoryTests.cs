@@ -103,6 +103,30 @@ namespace WeightTracker.ClassLib.Tests.DataRepository
         #endregion
 
         #region Update Tests
+        [TestMethod]
+        public void ShouldNotDeleteAnythingIfRecordsListIsEmpty(){
+            var sut = new InMemoryRepository();
+            var result = sut.Delete(4);
+            Assert.AreEqual(false, result);
+        }
+
+        [TestMethod]
+        public void ShouldNotDeleteAnythingIfIdIsNotInRecords(){
+            var sut = new InMemoryRepository();
+            sut.Insert(_weightRecordOK);
+            sut.Insert(_weightRecordOK2);
+            var result = sut.Delete(4);
+            Assert.AreEqual(false, result);
+        }
+
+        [TestMethod]
+        public void ShouldRemoveRecordIfFoundInRecordsList(){
+            var sut = new InMemoryRepository();
+            sut.Insert(_weightRecordOK);
+            sut.Insert(_weightRecordOK2);
+            var result = sut.Delete(_weightRecordOK.Id);
+            Assert.AreEqual(true, result);
+        }
              
         #endregion
 
