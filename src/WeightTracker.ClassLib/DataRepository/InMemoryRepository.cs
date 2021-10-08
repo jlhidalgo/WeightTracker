@@ -19,7 +19,8 @@ namespace WeightTracker.ClassLib.DataRepository
 
         public bool Delete(int id)
         {
-            throw new System.NotImplementedException();
+
+            return _weightRecords.Remove(id);
         }
 
         public List<WeightRecord> GetAll(bool ascending)
