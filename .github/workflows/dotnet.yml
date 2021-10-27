@@ -18,8 +18,8 @@ jobs:
       with:
         dotnet-version: 5.0.x
     - name: Restore dependencies
-      run: dotnet restore WeightTracker
+      run: dotnet restore src/WeightTracker.ClassLib
     - name: Build
-      run: dotnet build WeightTracker --configuration Release --no-restore
+      run: dotnet build src/WeightTracker.ClassLib --configuration Release --no-restore
     - name: Test
-      run: dotnet test WeightTracker --no-build --verbosity normal
+      run: dotnet test src/Tests/WeightTracker.ClassLib.Tests --no-build --verbosity normal
