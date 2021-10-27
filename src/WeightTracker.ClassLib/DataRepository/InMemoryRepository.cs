@@ -33,6 +33,18 @@ namespace WeightTracker.ClassLib.DataRepository
             
         }
 
+        public WeightRecord GetRecordById(int id)
+        {
+            if(_weightRecords.ContainsKey(id))
+            {
+                return _weightRecords[id];
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         // todo: add logs
         public bool Insert(WeightRecord weightRecord)
         {
@@ -48,7 +60,14 @@ namespace WeightTracker.ClassLib.DataRepository
 
         public bool Update(WeightRecord weightRecord)
         {
-            throw new System.NotImplementedException();
+            if(!_weightRecordRules.All(rule => rule.IsValid(weightRecord)) ||
+                !_weightRecords.ContainsKey(weightRecord.Id))
+            {
+                return false;
+            }
+
+            _weightRecords[weightRecord.Id] = weightRecord;
+            return true;
         }
     }
 }

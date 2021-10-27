@@ -238,7 +238,160 @@ namespace WeightTracker.ClassLib.Tests.DataRepository
             result = sut.Insert(_weightRecordOK);
             Assert.AreEqual(false, result);
         }
-        
+
+        #endregion
+
+        #region Update Tests
+
+        [TestMethod]
+        public void ShouldReturnFalseIfKeyNotExists()
+        {
+            var sut = new InMemoryRepository();
+            var weightRecord = _weightRecordOK;
+            var result = sut.Update(weightRecord);
+            Assert.AreEqual(false, result);
+        }
+
+        [TestMethod]
+        public void ShouldNotUpdateRecordIfNullObject()
+        {
+            var sut = new InMemoryRepository();
+            var result = sut.Insert(null);
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public void ShouldNotUpdateRecordIfIdIsZero()
+        {
+            var sut = new InMemoryRepository();
+            var result = sut.Update(new WeightRecord());
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        [DataRow(0, 1, 1)]
+        [DataRow(1, 0, 1)]
+        [DataRow(1, 1, 0)]
+        public void ShouldNotUpdateRecordIfAnyPercentIsZero(double bfp, double bp, double wp)
+        {
+            var wr = new WeightRecord
+            {
+                Id = 1,
+                CreatedDate = DateTime.Now,
+                BodyFatPercent = bfp,
+                BonesPercent = bp,
+                WaterPercent = wp
+            };
+            var sut = new InMemoryRepository();
+            var result = sut.Update(wr);
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        [DataRow(-1, 1, 1)]
+        [DataRow(1, -1, 1)]
+        [DataRow(1, 1, -1)]
+        public void ShouldNotUpdateRecordIfAnyPercentIsLessThanZero(double bfp, double bp, double wp)
+        {
+            var wr = new WeightRecord
+            {
+                Id = 1,
+                CreatedDate = DateTime.Now,
+                BodyFatPercent = bfp,
+                BonesPercent = bp,
+                WaterPercent = wp
+            };
+            var sut = new InMemoryRepository();
+            var result = sut.Update(wr);
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        [DataRow(100, 1, 1)]
+        [DataRow(1, 100, 1)]
+        [DataRow(1, 1, 100)]
+        public void ShouldNotUpdateRecordIfAnyPercentIsGreaterThan100(double bfp, double bp, double wp)
+        {
+            var wr = new WeightRecord
+            {
+                Id = 1,
+                CreatedDate = DateTime.Now,
+                BodyFatPercent = bfp,
+                BonesPercent = bp,
+                WaterPercent = wp
+            };
+            var sut = new InMemoryRepository();
+            var result = sut.Update(wr);
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        [DataRow(50, 50, 9)]
+        [DataRow(98, 1, 1)]
+        [DataRow(40, 40, 20)]
+        public void ShouldNotUpdateRecordIfPercentsSumIsGreaterThan99(double bfp, double bp, double wp)
+        {
+            var wr = new WeightRecord
+            {
+                Id = 1,
+                CreatedDate = DateTime.Now,
+                BodyFatPercent = bfp,
+                BonesPercent = bp,
+                WaterPercent = wp
+            };
+            var sut = new InMemoryRepository();
+            var result = sut.Update(wr);
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public void ShouldUpdateRecordIfConditionsAreOk()
+        {
+            var sut = new InMemoryRepository();
+            sut.Insert(_weightRecordOK);
+            _weightRecordOK.BodyFatPercent = 20;
+            var result = sut.Update(_weightRecordOK);
+            Assert.AreEqual(true, result);
+
+            var wr = sut.GetRecordById(_weightRecordOK.Id);
+            Assert.AreEqual(_weightRecordOK.Id, wr.Id);
+            Assert.AreEqual(_weightRecordOK.BodyFatPercent, wr.BodyFatPercent);
+        }
+
+        #endregion
+
+        #region GetRecordById Tests
+        [TestMethod]
+        public void ShouldReturnNullIfIdNotFound()
+        {
+            var sut = new InMemoryRepository();
+            sut.Insert(_weightRecordOK);
+            var result = sut.GetRecordById(_weightRecordOK2.Id);
+            Assert.IsNull(result);
+        }
+
+        [TestMethod]
+        public void ShouldReturnNullIfDictionaryIsEmptyd()
+        {
+            var sut = new InMemoryRepository();
+            var result = sut.GetRecordById(_weightRecordOK.Id);
+            Assert.IsNull(result);
+        }
+
+        [TestMethod]
+        public void ShouldReturnWeightRecordIfFound()
+        {
+            var sut = new InMemoryRepository();
+            sut.Insert(_weightRecordOK);
+            sut.Insert(_weightRecordOK2);
+            sut.Insert(_weightRecordOK3);
+            var result = sut.GetRecordById(_weightRecordOK2.Id);
+            Assert.AreEqual(_weightRecordOK2.Id, result.Id);
+            Assert.AreEqual(_weightRecordOK2.BodyFatPercent, result.BodyFatPercent);
+            Assert.AreEqual(_weightRecordOK2.BonesPercent, result.BonesPercent);
+            Assert.AreEqual(_weightRecordOK2.WaterPercent, result.WaterPercent);
+        }
+
         #endregion
     }
 }
